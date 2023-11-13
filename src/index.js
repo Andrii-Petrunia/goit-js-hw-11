@@ -6,6 +6,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 document.addEventListener('DOMContentLoaded', () => {
   let page = 1;
   let totalHits = 0;
+  let totalPages = 0;
 
   const searchForm = document.getElementById('search-form');
   const gallery = document.querySelector('.gallery');
@@ -24,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       totalHits = response.data.totalHits;
+      totalPages = Math.ceil(totalHits / perPage);
 
       return response.data.hits;
     } catch (error) {
@@ -36,15 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const renderImages = images => {
     if (images.length === 0 && page === 1) {
-      // Повідомлення для порожнього результату при першому завантаженні
       Notify.warning(
         'Sorry, there are no images matching your search query. Please try again.'
       );
       return;
     } else if (images.length === 0 && page > 1) {
-      // Ховаємо кнопку "Load more", якщо зображень більше немає
       loadMoreBtn.style.display = 'none';
-      // Повідомлення про досягнення кінця результатів
+
       Notify.warning(
         "We're sorry, but you've reached the end of search results."
       );
@@ -111,10 +111,14 @@ document.addEventListener('DOMContentLoaded', () => {
       renderImages(images);
 
       if (images.length > 0) {
-        // Показуємо кнопку "Load more" тільки якщо є результати
         loadMoreBtn.style.display = 'block';
       } else {
-        // Ховаємо кнопку "Load more", якщо результатів немає
+        loadMoreBtn.style.display = 'none';
+
+        Notify.warning('No results found. Please try again.');
+      }
+
+      if (totalPages === 1) {
         loadMoreBtn.style.display = 'none';
       }
     } else {
@@ -130,20 +134,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if (images.length > 0) {
       renderImages(images);
     } else {
-      // Ховаємо кнопку "Load more", якщо зображень більше немає
-
       loadMoreBtn.style.display = 'none';
 
-      // Повідомлення про досягнення кінця результатів
       Notify.warning(
         "We're sorry, but you've reached the end of search results."
       );
+    }
+
+    if (page === totalPages) {
+      loadMoreBtn.style.display = 'none';
+      Notify.warning("You've reached the last page of search results.");
     }
   };
 
   searchForm.addEventListener('submit', handleSearch);
   loadMoreBtn.addEventListener('click', handleLoadMore);
 
-  // Приховати кнопку "load-more" при першому завантаженні
   loadMoreBtn.style.display = 'none';
 });
