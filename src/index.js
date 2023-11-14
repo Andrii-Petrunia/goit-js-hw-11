@@ -120,6 +120,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (totalPages === 1) {
         loadMoreBtn.style.display = 'none';
+        Notify.warning(
+          "We're sorry, but you've reached the end of search results."
+        );
       }
     } else {
       Notify.warning('Please enter a search query.');
@@ -143,7 +146,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (page === totalPages) {
       loadMoreBtn.style.display = 'none';
-      Notify.warning("You've reached the last page of search results.");
+      Notify.warning(
+        "We're sorry, but you've reached the end of search results."
+      );
     }
   };
 
